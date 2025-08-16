@@ -14,7 +14,13 @@ const ComplexForm = (props: Props) => {
   });
   return (
     <form className="flex flex-col justify-start gap-4">
-      <Input {...register("name")} label="name" />
+      <Input
+        {...register("name")}
+        label="Nom"
+        labelPlacement="outside"
+        classNames={{ label: "font-light" }}
+        className="max-w-md"
+      />
       <ProgrammingLanguagesStep />
     </form>
   );
