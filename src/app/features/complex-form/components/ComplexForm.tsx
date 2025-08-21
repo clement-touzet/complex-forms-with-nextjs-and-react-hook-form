@@ -1,28 +1,29 @@
 "use client";
-import ProgrammingLanguagesStep from "@/app/features/complex-form/components/form-steps/ProgrammingLanguagesStep";
-import defaultComplexFormValues from "@/app/features/complex-form/constants/defaultComplexFormValues";
+import ProgrammingSkillsStep from "@/app/features/complex-form/components/form-steps/ProgrammingSkillsStep";
+import defaultComplexFormValues from "@/app/features/complex-form/constants/defaultFormValues";
+import { JOB_NAME_FIELD_NAME } from "@/app/features/complex-form/constants/formFieldsNames";
 import { ComplexFormType } from "@/app/features/complex-form/types/ComplexFormType";
 import { Input } from "@heroui/react";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
-type Props = {};
-
-const ComplexForm = (props: Props) => {
-  const { register, handleSubmit, formState } = useForm<ComplexFormType>({
+const ComplexForm = () => {
+  const formMethods = useForm<ComplexFormType>({
     defaultValues: defaultComplexFormValues,
   });
   return (
-    <form className="flex flex-col justify-start gap-4">
-      <Input
-        {...register("name")}
-        label="Nom"
-        labelPlacement="outside"
-        classNames={{ label: "font-light" }}
-        className="max-w-md"
-      />
-      <ProgrammingLanguagesStep />
-    </form>
+    <FormProvider {...formMethods}>
+      <form className="flex flex-col justify-start gap-4">
+        <Input
+          {...formMethods.register(JOB_NAME_FIELD_NAME)}
+          label="Nom du métier"
+          labelPlacement="outside"
+          classNames={{ label: "font-light" }}
+          className="max-w-md"
+        />
+        <ProgrammingSkillsStep />
+      </form>
+    </FormProvider>
   );
 };
 

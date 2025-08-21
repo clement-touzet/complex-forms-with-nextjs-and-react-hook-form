@@ -1,0 +1,2 @@
+export const PROGRAMMING_SKILLS_DEFAULT_VALUES = [];
+export const JOB_NAME_DEFAULT_VALUES = "";
