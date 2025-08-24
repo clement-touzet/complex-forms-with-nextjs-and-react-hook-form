@@ -1,4 +1,8 @@
-import { PROGRAMMING_SKILLS_FIELD_NAME } from "@/app/features/complex-form/constants/formFieldsNames";
+import AddLibraryInput from "@/app/features/complex-form/components/form-steps/programming-skills/AddLibraryInput";
+import {
+  ProgrammingSkillLibraryType,
+  ProgrammingSkillType,
+} from "@/app/features/complex-form/types/ComplexFormType";
 import {
   Card,
   CardHeader,
@@ -9,42 +13,26 @@ import {
   Input,
 } from "@heroui/react";
 import { useState, useRef, useEffect } from "react";
-import { useFieldArray } from "react-hook-form";
 import { HiXMark, HiPlus } from "react-icons/hi2";
 
 type ProgrammingSkillCardProps = {
-  skill: string;
+  skill: ProgrammingSkillType;
   onDeleteSkill: () => void;
+  addLibrary: (newLibrary: ProgrammingSkillLibraryType) => void;
+  deleteLibrary: (library: ProgrammingSkillLibraryType) => void;
 };
 
 const ProgrammingSkillCard = ({
   skill,
   onDeleteSkill,
+  addLibrary,
+  deleteLibrary,
 }: ProgrammingSkillCardProps) => {
+  const [showAddLibraryInput, setShowAddLibraryInput] = useState(false);
+  const [showDeleteSkillButton, setShowDeleteSkillButton] = useState(false);
+
   const onDeleteLanguageClick = () => {
     onDeleteSkill();
-  };
-
-  const [showAddLibraryInput, setShowAddLibraryInput] = useState(false);
-  const [libraries, setLibraries] = useState(["Tailwind", "MUI", "Next.js"]);
-  const [newLibrary, setNewLibrary] = useState("");
-  const [showDeleteCard, setShowDeleteCard] = useState(false);
-
-  const refInput = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (showAddLibraryInput) refInput.current?.focus();
-  }, [showAddLibraryInput]);
-
-  const showAddLibraryButton = !showAddLibraryInput;
-
-  const addLibrary = () => {
-    setLibraries((prev) => [...prev, newLibrary]);
-    resetNewLibrary();
-  };
-
-  const resetNewLibrary = () => {
-    setNewLibrary("");
   };
 
   const hideAddLibraryInput = () => {
@@ -55,43 +43,36 @@ const ProgrammingSkillCard = ({
     setShowAddLibraryInput(true);
   };
 
-  const handleCancelAddLibrary = () => {
+  const cancelAddLibrary = () => {
     hideAddLibraryInput();
   };
 
-  const handleAddNewLibrary = () => {
-    addLibrary();
+  const onAddNewLibrary = (library: ProgrammingSkillLibraryType) => {
+    addLibrary(library);
     hideAddLibraryInput();
   };
 
   const handleDeleteLibrary = (libraryToDelete: string) => {
-    setLibraries((prev) =>
-      prev.filter((library) => libraryToDelete !== library)
-    );
-  };
-
-  const handleChangeNewLibrary = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setNewLibrary(event.target.value);
+    deleteLibrary(libraryToDelete);
   };
 
   const handleMouseEnterCard = () => {
-    setShowDeleteCard(true);
+    setShowDeleteSkillButton(true);
   };
 
   const handleMouseLeaveCard = () => {
-    setShowDeleteCard(false);
+    setShowDeleteSkillButton(false);
   };
 
+  const showAddLibraryButton = !showAddLibraryInput;
   return (
     <Card
       onMouseEnter={handleMouseEnterCard}
       onMouseLeave={handleMouseLeaveCard}
     >
       <CardHeader className="flex justify-between pb-0 min-h-12">
-        <h3 className="font-semibold pb-0.5">{skill}</h3>
-        {showDeleteCard ? (
+        <h3 className="font-semibold pb-0.5">{skill.name}</h3>
+        {showDeleteSkillButton ? (
           <Button
             isIconOnly
             startContent={<HiXMark />}
@@ -103,7 +84,7 @@ const ProgrammingSkillCard = ({
       </CardHeader>
       <CardBody className="gap-1">
         <div className="flex flex-wrap gap-1">
-          {libraries.map((library) => {
+          {skill.libraries.map((library) => {
             return (
               <Chip
                 variant="flat"
@@ -127,44 +108,10 @@ const ProgrammingSkillCard = ({
           ) : null}
         </div>
         {showAddLibraryInput ? (
-          <div className="flex items-center gap-0.5">
-            <Button
-              size="sm"
-              variant="light"
-              radius="full"
-              isIconOnly
-              onPress={handleCancelAddLibrary}
-            >
-              <HiXMark />
-            </Button>
-            <ButtonGroup className="justify-start">
-              <Input
-                // size="sm"
-                classNames={{
-                  inputWrapper: "rounded-r-none",
-                }}
-                className="max-w-30"
-                placeholder="Biliothèque"
-                minLength={1}
-                onChange={handleChangeNewLibrary}
-                value={newLibrary}
-                ref={refInput}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddNewLibrary();
-                  }
-                }}
-              ></Input>
-              <Button
-                // size="sm"
-                color="primary"
-                onPress={handleAddNewLibrary}
-              >
-                Ajouter
-              </Button>
-            </ButtonGroup>
-          </div>
+          <AddLibraryInput
+            cancelAddLibrary={cancelAddLibrary}
+            addLibrary={onAddNewLibrary}
+          />
         ) : null}
       </CardBody>
     </Card>

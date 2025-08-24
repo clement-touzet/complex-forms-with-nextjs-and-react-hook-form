@@ -1,11 +1,13 @@
-import ProgrammingSkillCard from "@/app/features/complex-form/components/form-steps/programming-skills/ProgrammingSkillCard";
 import ProgrammingSkillsCards from "@/app/features/complex-form/components/form-steps/programming-skills/ProgrammingSkillsCards";
 import ProgrammingSkillsSelect from "@/app/features/complex-form/components/form-steps/programming-skills/ProgrammingSkillsSelect";
 import { PROGRAMMING_SKILLS_FIELD_NAME } from "@/app/features/complex-form/constants/formFieldsNames";
+import { ComplexFormType } from "@/app/features/complex-form/types/ComplexFormType";
 import { Button, SelectItem } from "@heroui/react";
-import React, { ChangeEvent, useState } from "react";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import React, { useMemo, useState } from "react";
+import { useFieldArray } from "react-hook-form";
 import { HiPlus } from "react-icons/hi2";
+
+const PROGRAMMING_SKILLS = ["C++", "Java", "JavaScript"];
 
 const ProgrammingSkillsStep = () => {
   const [showSkillsSelect, setShowSkillsSelect] = useState(false);
@@ -15,13 +17,18 @@ const ProgrammingSkillsStep = () => {
     fields: selectedSkills,
     append: addSkill,
     remove: deleteSkill,
-  } = useFieldArray({
+    update: updateSkill,
+  } = useFieldArray<ComplexFormType>({
     name: PROGRAMMING_SKILLS_FIELD_NAME,
   });
-  console.log("fields ", selectedSkills);
 
-  const notSelectedSkills = ["C++", "Java", "JavaScript"].filter(
-    (skill) => !selectedSkills.includes(skill)
+  const notSelectedSkills = useMemo(
+    () =>
+      PROGRAMMING_SKILLS.filter(
+        (skill) =>
+          !selectedSkills.find((selectedSkill) => selectedSkill.name === skill)
+      ),
+    [selectedSkills]
   );
 
   const displaySkillsSelect = (show: boolean) => {
@@ -35,7 +42,7 @@ const ProgrammingSkillsStep = () => {
   };
 
   const handleSelectSkill = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    addSkill(event.target.value);
+    addSkill({ name: event.target.value, libraries: [] });
     displaySkillsSelect(false);
   };
 
@@ -48,7 +55,11 @@ const ProgrammingSkillsStep = () => {
           <h2 className="font-bold">Compétences en programmation</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-          <ProgrammingSkillsCards />
+          <ProgrammingSkillsCards
+            selectedSkills={selectedSkills}
+            deleteSkillByIndex={deleteSkill}
+            updateSkill={updateSkill}
+          />
 
           {showAddSkillButton ? (
             <Button
