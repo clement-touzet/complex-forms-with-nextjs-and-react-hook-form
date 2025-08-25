@@ -82,6 +82,9 @@ const ProgrammingSkillsStep = () => {
                   );
                 }}
                 onChange={handleSelectSkill}
+                onBlur={() => {
+                  setIsSkillsSelectOpen(false);
+                }}
               >
                 {notSelectedSkills.map((skill) => {
                   return <SelectItem key={skill}>{skill}</SelectItem>;
